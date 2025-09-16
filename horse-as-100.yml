@@ -12,3 +12,18 @@ services:
     networks:
       horse-duck-peering:
         ipv4_address: 172.31.0.2
+      horse-internal:
+        ipv4_address: 10.0.0.2
+
+  horse-interior-01:
+    extends:
+      file: router-templates.yml
+      service: interior-router
+    profiles: ["horse-as", "all-isps"]
+    hostname: horse-interior-01
+    container_name: horse-interior-01
+    environment:
+      - ISP_NAME=Horse
+    networks:
+      horse-internal:
+        ipv4_address: 10.0.1.1

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Starting configuration of virtual ISP ${ISP_NAME} (AS${ASN})"
+echo "Starting configuration of virtual interior router ${ISP_NAME}"
 
 # Replace container daemons file with our template
 cp /scripts/daemons-template-interior /etc/frr/daemons

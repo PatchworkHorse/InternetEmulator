@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Starting configuration of virtual ISP ${ISP_NAME} (AS${ASN})"
+echo "Starting configuration of virtual border router ${ISP_NAME} (AS${ASN})"
 
 # Replace container daemons file with our template
 cp /scripts/daemons-template-border /etc/frr/daemons

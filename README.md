@@ -4,34 +4,63 @@ Learning and experimentation with routing FRR using Docker.
 
 ### 📋 Overview
 
-For now, we have a three node setup, each running in its own Docker container.
+This is a multi-AS internet emulator with border and interior routers, featuring BGP peering between autonomous systems and OSPF for interior routing.
 
 #### 🐴 Horse ISP (AS100)
 
 - **Public IPv4 Space**: `216.177.0.0/16` (`216.177.0.0 -> 216.177.255.255`)
+- **Border Router**: `horse-border-01` (BGP + OSPF, Router ID: `216.177.0.1`)
+- **Interior Router**: `horse-interior-01` (OSPF, Router ID: `216.177.1.1`)
+- **Internal Network**: `10.0.0.0/16`
 
 #### 🦆 Duck ISP (AS200)
 
 - **Public IPv4 Space**: `50.50.0.0/16` (`50.50.0.0 -> 50.50.255.255`)
+- **Border Router**: `duck-border-01` (BGP + OSPF)
+- **Internal Network**: `10.1.0.0/16`
 
 #### 🐏 Ram ISP (AS350)
 
 - **Public IPv4 Space**: `66.211.0.0/16` (`66.211.0.0 -> 66.211.255.255`)
+- **Border Router**: `ram-border-01` (BGP + OSPF)
+- **Internal Network**: `10.2.0.0/16`
 
 #### 🔗 Peering
 - Horse ISP (AS100) ↔️ Duck ISP (AS200) via a private link using the private IP space `172.31.0.0/24`
 - Duck ISP (AS200) ↔️ Ram ISP (AS350) via a private link using the private IP space `172.32.0.0/24`
 
+#### 🌐 Routing Protocols
+- **BGP**: Used for inter-AS routing between border routers
+- **OSPF**: Used for intra-AS routing within each autonomous system
+
 ### Topology Diagram
 
 ```mermaid
 graph TD
-   HORSE[🐴 Horse ISP<br>AS100<br>216.177.0.0/16]
-   DUCK[🦆 Duck ISP<br>AS200<br>50.50.0.0/16]
-   RAM[🐏 Ram ISP<br>AS300<br>66.211.0.0/16]
+   subgraph "🐴 Horse ISP (AS100)"
+      HB[horse-border-01<br>BGP + OSPF<br>216.177.0.1]
+      HI[horse-interior-01<br>OSPF<br>216.177.1.1]
+      HB -.->|"10.0.0.0/16<br>OSPF"| HI
+   end
+   
+   subgraph "🦆 Duck ISP (AS200)"
+      DB[duck-border-01<br>BGP + OSPF]
+   end
+   
+   subgraph "🐏 Ram ISP (AS350)"
+      RB[ram-border-01<br>BGP + OSPF]
+   end
 
-   HORSE -- "172.31.0.0/24<br>Peering" --- DUCK
-   DUCK -- "172.32.0.0/24<br>Peering" --- RAM
+   HB ===|"172.31.0.0/24<br>BGP Peering"| DB
+   DB ===|"172.32.0.0/24<br>BGP Peering"| RB
+   
+   classDef horseClass fill:#e1f5fe
+   classDef duckClass fill:#fff3e0
+   classDef ramClass fill:#f3e5f5
+   
+   class HB,HI horseClass
+   class DB duckClass
+   class RB ramClass
 ```
 
 ### 🚀 Startup
@@ -60,39 +89,63 @@ docker compose down
 
 You can access the FRR CLI interactively on each router using the following commands:
 
+**Border Routers (BGP + OSPF):**
 ```bash
-docker exec -it horse-isp vtysh
-docker exec -it duck-isp vtysh
-docker exec -it ram-isp vtysh
-``` 
+docker exec -it horse-border-01 vtysh
+docker exec -it duck-border-01 vtysh
+docker exec -it ram-border-01 vtysh
+```
+
+**Interior Routers (OSPF only):**
+```bash
+docker exec -it horse-interior-01 vtysh
+```
 
 **Once inside the vtysh session**, you can verify BGP peering and routes using commands like:
 ```bash
 show ip bgp summary
 show ip route
 show ip bgp
+show ip ospf neighbor
+show ip ospf route
 # etc.
 ```
 
-**Expected output** - We expect to see a route summary like:
+**Expected BGP output** - On a border router, we expect to see BGP routes like:
 
 ```
    Network          Next Hop            Metric LocPrf Weight Path
-*> 50.50.0.0/16     172.32.0.2               0             0 200 i
-*> 66.211.0.0/16    0.0.0.0                  0         32768 i
-*> 216.177.0.0/16   172.32.0.2                             0 200 100 i
+*> 50.50.0.0/16     172.31.0.3               0             0 200 i
+*> 66.211.0.0/16    172.31.0.3                             0 200 350 i
+*> 216.177.0.0/16   0.0.0.0                  0         32768 i
 ```
 
-We can ping the public IPs of directly connected ISPs to verify connectivity:
+**Expected OSPF output** - On any router within an AS, we expect to see OSPF routes like:
 
-From HORSE to DUCK:
-```bash
-ping 50.50.0.1
+```
+O   216.177.0.1/32 [110/10] via 10.0.0.2, eth0, 00:01:23
+O   216.177.1.1/32 [110/20] via 10.0.0.2, eth0, 00:01:23
 ```
 
-When pinging between ISPs that are not directly connected, be sure to specify the source IP address to ensure the correct interface is used:
-From HORSE to RAM:
+#### 🔗 Testing Connectivity
+
+You can test connectivity between routers using ping commands. Make sure to specify the source IP to ensure proper routing:
+
+**From Horse Border to Duck Border (direct BGP peer):**
 ```bash
+# Inside horse-border-01 container
+ping -I 216.177.0.1 172.31.0.3
+```
+
+**From Horse Border to Ram Border (via Duck):**
+```bash
+# Inside horse-border-01 container  
 ping -I 216.177.0.1 66.211.0.1
+```
+
+**Testing interior OSPF connectivity (within Horse AS):**
+```bash
+# Inside horse-border-01 container
+ping 216.177.1.1
 ```   
 
