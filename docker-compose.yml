@@ -12,7 +12,7 @@ services:
       - BGP_ROUTER_ID=216.177.0.1
     volumes:
       - ./scripts:/scripts:ro
-    entrypoint: /scripts/entrypoint-horse.sh
+    entrypoint: /scripts/entrypoint.sh
     cap_add:
       - NET_ADMIN
       - SYS_ADMIN
@@ -33,7 +33,7 @@ services:
       - BGP_ROUTER_ID=50.50.0.1
     volumes:
       - ./scripts:/scripts:ro
-    entrypoint: /scripts/entrypoint-duck.sh
+    entrypoint: /scripts/entrypoint.sh
     cap_add:
       - NET_ADMIN
       - SYS_ADMIN
@@ -46,6 +46,7 @@ services:
 networks:
   horse-duck-peering:
     driver: bridge
+    internal: true
     ipam:
       config:
         - subnet: 172.31.0.0/24
