@@ -63,6 +63,7 @@ You can access the FRR CLI interactively on each router using the following comm
 ```bash
 docker exec -it horse-isp vtysh
 docker exec -it duck-isp vtysh
+docker exec -it ram-isp vtysh
 ``` 
 
 **Once inside the vtysh session**, you can verify BGP peering and routes using commands like:
