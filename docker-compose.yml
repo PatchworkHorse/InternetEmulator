@@ -1,0 +1,52 @@
+services: 
+  horse-isp: 
+    build:
+      context: ./frr-image
+      dockerfile: dockerfile
+    container_name: horse-isp
+    hostname: horse-isp-border
+    environment:
+      - ISP_NAME=Horse
+      - ASN=100
+      - PUBLIC_IPV4_ALLOC=216.177.0.0/16
+      - BGP_ROUTER_ID=216.177.0.1
+    volumes:
+      - ./scripts:/scripts:ro
+    entrypoint: /scripts/entrypoint-horse.sh
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    networks:
+      horse-duck-peering:
+        ipv4_address: 172.31.0.2
+
+  duck-isp: 
+    build:
+      context: ./frr-image
+      dockerfile: dockerfile
+    container_name: duck-isp
+    hostname: duck-isp-border
+    environment:
+      - ISP_NAME=Duck
+      - ASN=200
+      - PUBLIC_IPV4_ALLOC=50.50.0.0/16
+      - BGP_ROUTER_ID=50.50.0.1
+    volumes:
+      - ./scripts:/scripts:ro
+    entrypoint: /scripts/entrypoint-duck.sh
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    networks:
+      horse-duck-peering:
+        ipv4_address: 172.31.0.3
+
+
+
+networks:
+  horse-duck-peering:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.0.0/24
+    

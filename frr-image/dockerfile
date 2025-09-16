@@ -1,0 +1,18 @@
+# Get our base image
+FROM ubuntu:latest
+
+# Install core tools 
+RUN apt-get update
+RUN apt-get install -y curl gnupg2 lsb-release nano iputils-ping mtr 
+
+# Add keys 
+RUN curl -s https://deb.frrouting.org/frr/keys.asc | apt-key add -
+
+# Add the repository
+RUN echo deb https://deb.frrouting.org/frr $(lsb_release -s -c) frr-8 | tee -a /etc/apt/sources.list.d/frr
+
+# Install FRR
+RUN apt-get install -y frr frr-pythontools
+
+# Keep the container running
+CMD ["sleep", "infinity"]
