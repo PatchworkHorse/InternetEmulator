@@ -14,7 +14,7 @@ For now, we have a three node setup, each running in its own Docker container.
 
 - **Public IPv4 Space**: `50.50.0.0/16` (`50.50.0.0 -> 50.50.255.255`)
 
-#### 🐏 Ram ISP (AS300)
+#### 🐏 Ram ISP (AS350)
 
 - **Public IPv4 Space**: `66.211.0.0/16` (`66.211.0.0 -> 66.211.255.255`)
 
