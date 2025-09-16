@@ -4,7 +4,7 @@ Learning and experimentation with routing FRR using Docker.
 
 ### 📋 Overview
 
-For now, we have a two node setup, each running in its own Docker container.
+For now, we have a three node setup, each running in its own Docker container.
 
 #### 🐴 Horse ISP (AS100)
 
@@ -14,17 +14,31 @@ For now, we have a two node setup, each running in its own Docker container.
 
 - **Public IPv4 Space**: `50.50.0.0/16` (`50.50.0.0 -> 50.50.255.255`)
 
-#### 🐏 Ram ISP (AS300) *(Not yet connected)*
+#### 🐏 Ram ISP (AS300)
 
 - **Public IPv4 Space**: `66.211.0.0/16` (`66.211.0.0 -> 66.211.255.255`)
 
 #### 🔗 Peering
 - Horse ISP (AS100) ↔️ Duck ISP (AS200) via a private link using the private IP space `172.31.0.0/24`
+- Duck ISP (AS200) ↔️ Ram ISP (AS350) via a private link using the private IP space `172.32.0.0/24`
+
+### Topology Diagram
+
+```mermaid
+graph TD
+   HORSE[🐴 Horse ISP<br>AS100<br>216.177.0.0/16]
+   DUCK[🦆 Duck ISP<br>AS200<br>50.50.0.0/16]
+   RAM[🐏 Ram ISP<br>AS300<br>66.211.0.0/16]
+
+   HORSE -- "172.31.0.0/24<br>Peering" --- DUCK
+   DUCK -- "172.32.0.0/24<br>Peering" --- RAM
+```
 
 ### 🚀 Startup
 
 To start the internet emulator, simply run:
 
+```bash
 ```bash
 docker compose up
 ```
@@ -43,7 +57,7 @@ docker compose up -d
 docker compose down
 ```
 
-### 🔧 Accessing the "Routers" - Verify BGP Peering
+### 🔧 Accessing the "Routers" - Verify BGP Peering and Connectivity 
 
 You can access the FRR CLI interactively on each router using the following commands:
 
@@ -64,6 +78,21 @@ show ip bgp
 
 ```
    Network          Next Hop            Metric LocPrf Weight Path
-*> 50.50.0.0/16     172.31.0.3               0             0 200 i
-*> 216.177.0.0/16   0.0.0.0                  0         32768 i
+*> 50.50.0.0/16     172.32.0.2               0             0 200 i
+*> 66.211.0.0/16    0.0.0.0                  0         32768 i
+*> 216.177.0.0/16   172.32.0.2                             0 200 100 i
 ```
+
+We can ping the public IPs of directly connected ISPs to verify connectivity:
+
+From HORSE to DUCK:
+```bash
+ping 50.50.0.1
+```
+
+When pinging between ISPs that are not directly connected, be sure to specify the source IP address to ensure the correct interface is used:
+From HORSE to RAM:
+```bash
+ping -I 216.177.0.1 66.211.0.1
+```   
+

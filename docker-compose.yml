@@ -1,3 +1,5 @@
+# Each Service section represents an autonomous system (ISP) router.
+# In the future, interior routers can be added to each ISP to simulate route propagation.
 services: 
   horse-isp: 
     build:
@@ -16,6 +18,10 @@ services:
     cap_add:
       - NET_ADMIN
       - SYS_ADMIN
+    sysctls:
+      - net.ipv4.ip_forward=1
+      - net.ipv4.conf.all.rp_filter=0
+      - net.ipv4.conf.default.rp_filter=0
     networks:
       horse-duck-peering:
         ipv4_address: 172.31.0.2
@@ -37,10 +43,42 @@ services:
     cap_add:
       - NET_ADMIN
       - SYS_ADMIN
+    sysctls:
+      - net.ipv4.ip_forward=1
+      - net.ipv4.conf.all.rp_filter=0
+      - net.ipv4.conf.default.rp_filter=0
     networks:
       horse-duck-peering:
         ipv4_address: 172.31.0.3
+      duck-ram-peering:
+        ipv4_address: 172.32.0.2
 
+  ram-isp:
+    build:
+      context: ./frr-image
+      dockerfile: dockerfile
+    container_name: ram-isp
+    hostname: ram-isp-border
+    environment:
+      - ISP_NAME=Ram
+      - ASN=350
+      - PUBLIC_IPV4_ALLOC=66.211.0.0/16
+      - BGP_ROUTER_ID=66.211.0.1
+    volumes:
+      - ./scripts:/scripts:ro
+    entrypoint: /scripts/entrypoint.sh
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    sysctls:
+      - net.ipv4.ip_forward=1
+      - net.ipv4.conf.all.rp_filter=0
+      - net.ipv4.conf.default.rp_filter=0
+    networks:
+      duck-ram-peering:
+        ipv4_address: 172.32.0.3
+
+# Each network suffixed with -peering emulates a direct peering connection between two ISPs.
 
 networks:
   horse-duck-peering:
@@ -49,4 +87,10 @@ networks:
     ipam:
       config:
         - subnet: 172.31.0.0/24
-    
+
+  duck-ram-peering:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.32.0.0/24
