@@ -45,19 +45,12 @@ docker compose down
 
 ### 🔧 Accessing the "Routers" - Verify BGP Peering
 
-You can access the FRR CLI of each router using the following commands:
+You can access the FRR CLI interactively on each router using the following commands:
 
 ```bash
 docker exec -it horse-isp vtysh
 docker exec -it duck-isp vtysh
 ``` 
-
-You can also access them interactively and go directly into a vtysh session:
-
-```bash
-docker exec -it horse-isp vtysh
-docker exec -it duck-isp vtysh
-```
 
 **Once inside the vtysh session**, you can verify BGP peering and routes using commands like:
 ```bash
