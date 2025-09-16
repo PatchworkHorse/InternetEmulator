@@ -39,7 +39,6 @@ graph TD
 To start the internet emulator, simply run:
 
 ```bash
-```bash
 docker compose up
 ```
 
