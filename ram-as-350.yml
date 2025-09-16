@@ -1,0 +1,14 @@
+services:
+  ram-border-01:
+    extends: 
+      file: router-templates.yml
+      service: border-router
+    profiles: ["ram-as", "all-isps"]
+    hostname: ram-border-01
+    container_name: ram-border-01
+    environment:
+      - ISP_NAME=Ram
+      - ASN=350
+    networks:
+      duck-ram-peering:
+        ipv4_address: 172.32.0.3

@@ -1,0 +1,23 @@
+# Interior networks 
+
+networks:
+  horse-interior:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 10.0.0.0/16
+  
+  duck-interior:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 10.1.0.0/16
+
+  ram-interior:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 10.2.0.0/16

@@ -1,0 +1,14 @@
+services:
+  horse-border-01: 
+    extends: 
+      file: router-templates.yml
+      service: border-router
+    profiles: ["horse-as", "all-isps"]
+    hostname: horse-border-01
+    container_name: horse-border-01
+    environment:
+      - ISP_NAME=Horse
+      - ASN=100
+    networks:
+      horse-duck-peering:
+        ipv4_address: 172.31.0.2

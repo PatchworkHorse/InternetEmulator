@@ -1,0 +1,16 @@
+# Inter-AS Peering Networks
+
+networks:
+  horse-duck-peering:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.31.0.0/24
+
+  duck-ram-peering:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.32.0.0/24
