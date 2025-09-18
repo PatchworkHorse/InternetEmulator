@@ -10,8 +10,8 @@ This is a multi-AS internet emulator with border and interior routers, featuring
 
 - **Public IPv4 Space**: `216.177.0.0/16` (`216.177.0.0 -> 216.177.255.255`)
 - **Border Router**: `horse-border-01` (BGP + OSPF, Router ID: `216.177.0.1`)
-- **Interior Router**: `horse-interior-01` (OSPF, Router ID: `216.177.1.1`)
-- **Internal Network**: `10.0.0.0/16`
+- **Interior Router**: `kitty-city-gateway-01` (OSPF, Router ID: `216.177.10.1`)
+- **Internal Network**: `10.10.0.0/29` (backhaul), `216.177.10.0/24` (customer network - Kitty City)
 
 #### 🦆 Duck ISP (AS200)
 
@@ -26,8 +26,8 @@ This is a multi-AS internet emulator with border and interior routers, featuring
 - **Internal Network**: `10.2.0.0/16`
 
 #### 🔗 Peering
-- Horse ISP (AS100) ↔️ Duck ISP (AS200) via a private link using the private IP space `172.31.0.0/24`
-- Duck ISP (AS200) ↔️ Ram ISP (AS350) via a private link using the private IP space `172.32.0.0/24`
+- Horse ISP (AS100) ↔️ Duck ISP (AS200) via a private link using the private IP space `172.31.0.0/29`
+- Duck ISP (AS200) ↔️ Ram ISP (AS350) via a private link using the private IP space `172.32.0.0/29`
 
 #### 🌐 Routing Protocols
 - **BGP**: Used for inter-AS routing between border routers
@@ -38,29 +38,33 @@ This is a multi-AS internet emulator with border and interior routers, featuring
 ```mermaid
 graph TD
    subgraph "🐴 Horse ISP (AS100)"
-      HB[horse-border-01<br>BGP + OSPF<br>216.177.0.1]
-      HI[horse-interior-01<br>OSPF<br>216.177.1.1]
-      HB -.->|"10.0.0.0/16<br>OSPF"| HI
+      HB[horse-border-01<br>BGP + OSPF<br>216.177.0.1<br>eth0: 10.10.0.1/29<br>eth1: 172.31.0.2/29]
+      HI[kitty-city-gateway-01<br>OSPF<br>216.177.1.1<br>eth0: 10.10.0.2/29<br>eth1: 216.177.10.1/24]
+      KC[Kitty City Network<br>216.177.10.0/24]
+      HB -.->|"10.10.0.0/29<br>OSPF Backhaul"| HI
+      HI -.->|"Customer Network"| KC
    end
    
    subgraph "🦆 Duck ISP (AS200)"
-      DB[duck-border-01<br>BGP + OSPF]
+      DB[duck-border-01<br>BGP + OSPF<br>eth0: 172.31.0.3/29<br>eth1: 172.32.0.2/29]
    end
    
    subgraph "🐏 Ram ISP (AS350)"
-      RB[ram-border-01<br>BGP + OSPF]
+      RB[ram-border-01<br>BGP + OSPF<br>172.32.0.3/29]
    end
 
-   HB ===|"172.31.0.0/24<br>BGP Peering"| DB
-   DB ===|"172.32.0.0/24<br>BGP Peering"| RB
-   
+   HB ===|"172.31.0.0/29<br>BGP Peering"| DB
+   DB ===|"172.32.0.0/29<br>BGP Peering"| RB
+
    classDef horseClass fill:#e1f5fe
    classDef duckClass fill:#fff3e0
    classDef ramClass fill:#f3e5f5
+   classDef customerClass fill:#e8f5e8
    
    class HB,HI horseClass
    class DB duckClass
    class RB ramClass
+   class KC customerClass
 ```
 
 ### 🚀 Startup
@@ -99,7 +103,7 @@ docker
 
 **Interior Routers (OSPF only):**
 ```bash
-docker exec -it horse-interior-01 vtysh
+docker exec -it kitty-city-01 vtysh
 ```
 
 **Once inside the vtysh session**, you can verify BGP peering and routes using commands like:

@@ -1,6 +1,6 @@
 include: 
   - router-templates.yml
-  - horse-as-100.yml
-  - duck-as-200.yml
-  - ram-as-350.yml
+  - AS-100-horse.yml
+  - AS-200-duck.yml
+  - AS-350-ram.yml
   - peering-networks.yml
