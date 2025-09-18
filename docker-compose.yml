@@ -3,5 +3,4 @@ include:
   - horse-as-100.yml
   - duck-as-200.yml
   - ram-as-350.yml
-  - interior-networks.yml
   - peering-networks.yml

@@ -94,6 +94,7 @@ You can access the FRR CLI interactively on each router using the following comm
 docker exec -it horse-border-01 vtysh
 docker exec -it duck-border-01 vtysh
 docker exec -it ram-border-01 vtysh
+docker 
 ```
 
 **Interior Routers (OSPF only):**
@@ -149,3 +150,5 @@ ping -I 216.177.0.1 66.211.0.1
 ping 216.177.1.1
 ```   
 
+### ❗ Caveats, Notes, and Troubleshooting
+- The _priority_ values in the network section in the various services sets the order in which interface assignments are made. Higher integers mean higher priority; so to connect a network to eth0, make sure it has a higher priority than a connected network on eth1, etc.
