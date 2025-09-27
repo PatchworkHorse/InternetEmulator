@@ -3,7 +3,7 @@ FROM ubuntu:latest
 
 # Install core tools 
 RUN apt-get update
-RUN apt-get install -y curl gnupg2 lsb-release nano iputils-ping mtr 
+RUN apt-get install -y curl gnupg2 lsb-release nano iputils-ping mtr net-tools tcpdump
 
 # Add keys 
 RUN curl -s https://deb.frrouting.org/frr/keys.asc | apt-key add -

@@ -10,5 +10,4 @@ services:
       - ISP_NAME=Ram
       - ASN=350
     networks:
-      duck-ram-peering:
-        ipv4_address: 172.32.0.3
+      - duck-ram-peering 

@@ -156,3 +156,12 @@ ping 216.177.1.1
 
 ### ❗ Caveats, Notes, and Troubleshooting
 - The _priority_ values in the network section in the various services sets the order in which interface assignments are made. Higher integers mean higher priority; so to connect a network to eth0, make sure it has a higher priority than a connected network on eth1, etc.
+
+
+### 📝 Todo
+- Add IPv6 support
+- Add DHCP support per AS
+- Create a DNS system on BIND
+- Add a couple of basic servers (I.e., web based on nginx)
+- https://github.com/nttgin/BGPalerter
+- Experiments with IP anycast - Pretend we're Netflix Open Connect

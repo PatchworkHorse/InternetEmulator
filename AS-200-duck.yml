@@ -11,7 +11,7 @@ services:
       - ASN=200
       
     networks:
-      horse-duck-peering: # 172.31.0.3
-        priority: 200
-      duck-ram-peering: # 172.32.0.2
-        priority: 100
+      horse-duck-peering: # eth0 - Peering to Horse-ISP
+        priority: 100  # Lower priority = eth0
+      duck-ram-peering: # eth1 - Peering to Ram-ISP
+        priority: 200  # Higher priority = eth1

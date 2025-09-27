@@ -6,7 +6,16 @@ networks:
       config:
         - subnet: 10.10.0.0/29
 
+  kitty-city-customers:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 216.177.10.0/24
+
 services:
+
+### Routers ###
   horse-border-01: 
     extends: 
       file: router-templates.yml
@@ -19,9 +28,9 @@ services:
       - ASN=100
     networks:
       horse-duck-peering: # eth0 - Peering to Duck-ISP
-        priority: 200
+        priority: 100  # Lower priority = eth0
       backhaul-border-kitty-city: # eth1 - Backhaul to interior router
-        priority: 100
+        priority: 200  # Higher priority = eth1
         
   kitty-city-gateway-01:
     extends:
@@ -35,3 +44,17 @@ services:
     networks:
       backhaul-border-kitty-city:  #eth0 - Backhaul to border router
         priority: 100
+
+### Customers ###
+  kitty-city-customer-01:
+    extends:
+      file: customer-templates.yml
+      service: isp-customer
+    profiles: ["horse-as", "all-isps"]
+    hostname: kitty-city-customer-01
+    container_name: kitty-city-customer-01
+    environment:
+      - ISP_NAME=Horse
+    networks:
+      kitty-city-customers:
+        ipv4_address: 216.177.10.54
