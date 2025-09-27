@@ -14,3 +14,10 @@ networks:
     ipam:
       config:
         - subnet: 172.32.0.0/29
+
+  horse-ram-peering:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.33.0.0/29

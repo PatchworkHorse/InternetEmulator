@@ -9,5 +9,7 @@ services:
     environment:
       - ISP_NAME=Ram
       - ASN=350
+      
     networks:
-      - duck-ram-peering 
+      duck-ram-peering:
+        interface_name: eth0
