@@ -1,0 +1,25 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36" version="28.2.5">
+  <diagram name="Page-1" id="D7VVERcVp1Hd7yCQGfqa">
+    <mxGraphModel dx="1530" dy="854" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1600" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="vdBbGhXjS1F48nc99xek-1" value="Core Nexus Exchange CNX&lt;div&gt;AS-65500&lt;/div&gt;&lt;div&gt;198.51.100.0/23 |&amp;nbsp;2001:db8:0:1::/64&lt;/div&gt;" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;horizontal=1;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="80" y="230" width="350" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="vdBbGhXjS1F48nc99xek-3" value="&lt;div&gt;PixelFlow&lt;/div&gt;&lt;div&gt;AS-65432&lt;/div&gt;&lt;div&gt;203.0.113.0/22 |&amp;nbsp;&amp;nbsp;2001:db8:face::/44&lt;/div&gt;" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;horizontal=1;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="600" y="230" width="350" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="vdBbGhXjS1F48nc99xek-4" value="&lt;div&gt;StrataLink Telecom&lt;/div&gt;&lt;div&gt;AS-65222&lt;/div&gt;&lt;div&gt;172.40.64.0/20 |&amp;nbsp;&amp;nbsp;2001:db8:beef::/40&lt;/div&gt;" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;horizontal=1;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="90" y="640" width="350" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="vdBbGhXjS1F48nc99xek-6" value="&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Axiom Global Transit&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;AS-65801&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;100.100.0.0/18&lt;/span&gt;&amp;nbsp;|&amp;nbsp;&amp;nbsp;2001:db8:101::/36&lt;/div&gt;" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;horizontal=1;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="600" y="650" width="350" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="vdBbGhXjS1F48nc99xek-7" value="&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Quantum Connect&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;AS-65111&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;100.101.0.0/20&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;|&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;2001:db8:cafe::/40&lt;/span&gt;&lt;/div&gt;" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;horizontal=1;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="140" y="1080" width="350" height="320" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
