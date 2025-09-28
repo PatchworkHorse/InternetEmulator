@@ -19,8 +19,7 @@ Inter-domain routing emulation with FRR, Docker Compose, and ipvlan networks.
 
 This project aims to emulate the Internet (or at least, a handful of ISPs, transit providers, CDNs, etc) using FRRouting within Docker containers. In that way, we're running "real" routing software (BGP, OSPF) without the need for specialized hardware or awkward network simulators.
 
-Each Autonomous System is defined within it's own Compose file. Border routers, core routers, servers, etc, are all grouped together. Each AS compose file extends shared templates. 
-
+Each Autonomous System is defined within its own Compose file. Border routers, core routers, servers, etc, are all grouped together. Each AS compose file extends shared templates. 
 
 ### 🤖 Current Autonomous Systems
 
@@ -115,6 +114,14 @@ Sample BGP output (StrataLink border):
 *> 100.100.100.0/18 100.100.101.1            0             0 65801 i
 *> 172.40.64.0/20   0.0.0.0                  0         32768 i
 ```
+
+### 📜 Conventions & Standards 
+- Autonomous systems use private ASNs from the 64k-65k range (e.g., 65222, 65801).
+- IPv4 addressing uses RFC 1918 space (e.g., 172.40.0.0/20, 100.100.100.0/18).
+- IPv6 addressing uses documentation prefixes (e.g., 2001:db8::/32).
+- Router names use IATA airport codes for border routers (e.g., `slt-mht-bdr-01` for StrataLink's Manchester, NH border router) and simple numeric names for core routers (e.g., `slt-core-01`).
+- Transit subnets between ASNs use /30 for IPv4 and /126 for IPv6 point-to-point links. The subnets are typically provided by the upstream AS.
+
 ### ➕ Adding new Autonomous Systems
 To add a new Autonomous System, follow these steps:
 1. **Create a new Compose file** – e.g., `AS-12345-NEW.yml` for the new AS. 
