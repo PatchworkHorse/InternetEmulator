@@ -1,5 +1,5 @@
 bgpd=yes
-ospfd=no
+ospfd=yes
 ospf6d=no
 ripd=no
 ripngd=no
@@ -43,3 +43,12 @@ bfdd_options="   -A 127.0.0.1"
 fabricd_options="-A 127.0.0.1"
 vrrpd_options="  -A 127.0.0.1"
 pathd_options="  -A 127.0.0.1"
+
+
+frr defaults traditional
+log syslog informational
+debug bgp events
+debug bgp filters
+debug bgp fsm
+debug bgp keepalives
+debug bgp updates

@@ -3,7 +3,7 @@ FROM ubuntu:latest
 
 # Install core tools 
 RUN apt-get update
-RUN apt-get install -y curl gnupg2 lsb-release nano iputils-ping mtr net-tools tcpdump
+RUN apt-get install -y curl gnupg2 lsb-release nano iputils-ping mtr net-tools tcpdump netcat-traditional
 
 # Add keys 
 RUN curl -s https://deb.frrouting.org/frr/keys.asc | apt-key add -
@@ -13,6 +13,9 @@ RUN echo deb https://deb.frrouting.org/frr $(lsb_release -s -c) frr-8 | tee -a /
 
 # Install FRR
 RUN apt-get install -y frr frr-pythontools
+
+# FRR owns it's log files
+RUN chown frr:frr /var/log/frr -R
 
 # Keep the container running
 CMD ["sleep", "infinity"]

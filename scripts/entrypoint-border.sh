@@ -8,6 +8,8 @@ cp /scripts/daemons-template-border /etc/frr/daemons
 # Copy in our custom FRR config
 cp /scripts/frr-${HOSTNAME}.conf /etc/frr/frr.conf
 
+chown frr:frr /var/log/frr -R
+
 # Enable IP forwarding at the kernel level
 sysctl -w net.ipv4.ip_forward=1
 

@@ -1,0 +1,26 @@
+# Axiom Global Transit
+# AS-65801
+# 100.100.0.0/18 | 2001:db8:101::/36
+
+networks: 
+  bh_atg-bos-bdr-01_slt-mht-bdr-01:
+    driver: ipvlan
+    internal: true
+    labels: 
+      type: "backhaul"
+      notes: "Peering StrataLink Telecom (BOS <-> MHT)"
+
+services:
+  atg-bos-bdr-01:
+    extends: 
+      file: router-templates.yml
+      service: border-router
+    profiles: ["as-65801", "agt-as", "all-isps"]
+    hostname: atg-bos-bdr-01
+    container_name: atg-bos-bdr-01
+    environment:
+      - ISP_NAME="Axiom Global Transit"
+      - ASN=65801
+    networks:
+      bh_atg-bos-bdr-01_slt-mht-bdr-01:
+        interface_name: eth1

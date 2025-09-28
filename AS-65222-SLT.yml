@@ -1,0 +1,43 @@
+# StrataLink Telecom
+# AS-65222
+# 172.40.64.0/20 |  2001:db8:beef::/40
+
+networks: 
+  bh_slt-mht-bdr-01_slt-mht-cor-01:
+    driver: ipvlan
+    internal: true
+    labels: 
+      type: "backhaul"
+      notes: "Internal link to SLT Core"
+
+services:
+  slt-mht-bdr-01:
+    extends: 
+      file: router-templates.yml
+      service: border-router
+    profiles: ["as-65222", "slt-as", "all-isps"]
+    hostname: slt-mht-bdr-01
+    container_name: slt-mht-bdr-01
+    environment:
+      - ISP_NAME=StrataLink
+      - ASN=65222
+    networks:
+      # Peering to Axiom Global Transit (BOS <-> MHT)
+      bh_atg-bos-bdr-01_slt-mht-bdr-01:
+        interface_name: eth0
+      # Internal link to SLT Core
+      bh_slt-mht-bdr-01_slt-mht-cor-01:
+        interface_name: eth1
+
+  slt-mht-cor-01:
+    extends:
+      file: router-templates.yml
+      service: interior-router
+    profiles: ["as-65222", "slt-as", "all-isps"]
+    hostname: slt-mht-cor-01
+    container_name: slt-mht-cor-01
+    environment:
+      - ISP_NAME=StrataLink
+    networks:
+      bh_slt-mht-bdr-01_slt-mht-cor-01:
+        interface_name: eth0
