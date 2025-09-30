@@ -1,12 +1,12 @@
 services: 
-  border-router:
+  router-base:
     profiles: ["template"] # This service should never run
     build:
       context: ./frr-image
       dockerfile: dockerfile
     volumes:
       - ./scripts:/scripts:ro
-    entrypoint: /scripts/entrypoint-border.sh
+    entrypoint: /scripts/entrypoint-router.sh
     cap_add:
       - NET_ADMIN
       - SYS_ADMIN
@@ -15,18 +15,4 @@ services:
       - net.ipv4.conf.all.rp_filter=0
       - net.ipv4.conf.default.rp_filter=0
 
-  interior-router:
-    profiles: ["template"] # This service should never run
-    build:
-      context: ./frr-image
-      dockerfile: dockerfile
-    volumes:
-      - ./scripts:/scripts:ro
-    entrypoint: /scripts/entrypoint-interior.sh
-    cap_add:
-      - NET_ADMIN
-      - SYS_ADMIN
-    sysctls:
-      - net.ipv4.ip_forward=1
-      - net.ipv4.conf.all.rp_filter=0
-      - net.ipv4.conf.default.rp_filter=0
+

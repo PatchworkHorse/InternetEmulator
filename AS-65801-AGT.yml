@@ -10,17 +10,41 @@ networks:
       type: "backhaul"
       notes: "Peering StrataLink Telecom (BOS <-> MHT)"
 
+  bh_atg-bos-bdr-01_atg-nyc-bdr-01:
+    driver: ipvlan
+    internal: true
+    labels: 
+      type: "backhaul"
+      notes: "Internal backhaul (BOS <-> NYC)"
+
 services:
   atg-bos-bdr-01:
     extends: 
       file: router-templates.yml
-      service: border-router
+      service: router-base
     profiles: ["as-65801", "agt-as", "all-isps"]
     hostname: atg-bos-bdr-01
     container_name: atg-bos-bdr-01
     environment:
-      - ISP_NAME="Axiom Global Transit"
+      - ISP_NAME=Axiom Global Transit
       - ASN=65801
+      - ROUTER_TYPE=border
     networks:
       bh_atg-bos-bdr-01_slt-mht-bdr-01:
         interface_name: eth1
+
+  atg-nyc-bdr-01:
+    extends: 
+      file: router-templates.yml
+      service: router-base
+    profiles: ["as-65801", "agt-as", "all-isps"]
+    hostname: atg-nyc-bdr-01
+    container_name: atg-nyc-bdr-01
+    environment:
+      - ISP_NAME=Axiom Global Transit
+      - ASN=65801
+      - ROUTER_TYPE=border
+    networks:
+      fabric_nyc_ix_1:
+        interface_name: eth0
+      
