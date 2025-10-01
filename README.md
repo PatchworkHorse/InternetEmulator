@@ -1,98 +1,148 @@
 ## 🌐 Docker Internet Emulator
 
-Learning and experimentation with routing FRR using Docker. 
+Inter-domain routing emulation with FRR, Docker Compose, and ipvlan networks.
+
+### ✨ Highlights
+
+- **Composable topology** – `docker-compose.yml` includes per-AS bundles that extend shared router templates.
+- **Reusable FRR image** – border and interior routers share an Ubuntu + FRR 8 base image with helper entrypoints.
+- **Deterministic interfaces** – ipvlan networks and explicit `interface_name` assignments keep link naming consistent across runs.
+
+
+### ⚠️ Caution
+- **Linux only** – Requires Docker Engine with Compose V2 on a Linux host due to ipvlan networking.
+- **Not for production** – This is a learning and experimentation tool, not a production-grade system.
+- **Added capabilities** – Containers run with `CAP_NET_ADMIN` and `CAP_NET_RAW` to manipulate networking. 
+
 
 ### 📋 Overview
 
-For now, we have a three node setup, each running in its own Docker container.
+This project aims to emulate the Internet (or at least, a handful of ISPs, transit providers, CDNs, etc) using FRRouting within Docker containers. In that way, we're running "real" routing software (BGP, OSPF) without the need for specialized hardware or awkward network simulators.
 
-#### 🐴 Horse ISP (AS100)
+Each Autonomous System is defined within its own Compose file. Border routers, core routers, servers, etc, are all grouped together. Each AS compose file extends shared templates. 
 
-- **Public IPv4 Space**: `216.177.0.0/16` (`216.177.0.0 -> 216.177.255.255`)
+### 🤖 Current Autonomous Systems
 
-#### 🦆 Duck ISP (AS200)
+#### StrataLink Telecom – AS65222
 
-- **Public IPv4 Space**: `50.50.0.0/16` (`50.50.0.0 -> 50.50.255.255`)
+- IPv4: 172.40.64.0/20
+- IPv6: 2001:db8:beef::/40
 
-#### 🐏 Ram ISP (AS350)
+StrataLink Telecom is a regional ISP based in the Northeastern United States servicing residential, business, and wholesale customers. Currently their sole upstream provider is Axiom Global Transit.
 
-- **Public IPv4 Space**: `66.211.0.0/16` (`66.211.0.0 -> 66.211.255.255`)
+#### Axiom Global Transit – AS65801
 
-#### 🔗 Peering
-- Horse ISP (AS100) ↔️ Duck ISP (AS200) via a private link using the private IP space `172.31.0.0/24`
-- Duck ISP (AS200) ↔️ Ram ISP (AS350) via a private link using the private IP space `172.32.0.0/24`
+- IPv4: 100.100.100.0/18
+- IPv6: 2001:db8:101::/36
 
-### Topology Diagram
+Axiom Global Transit is a mid-sized Tier 2 transit provider with a global footprint. They peer with several Tier 1 networks and operate multiple data centers worldwide.
 
-```mermaid
-graph TD
-   HORSE[🐴 Horse ISP<br>AS100<br>216.177.0.0/16]
-   DUCK[🦆 Duck ISP<br>AS200<br>50.50.0.0/16]
-   RAM[🐏 Ram ISP<br>AS300<br>66.211.0.0/16]
 
-   HORSE -- "172.31.0.0/24<br>Peering" --- DUCK
-   DUCK -- "172.32.0.0/24<br>Peering" --- RAM
+### 🤝 Current Peering Arrangements
+
+- **StrataLink Telecom (AS65222)** <--> **Axiom Global Transit (AS65801)**
+  - Bilateral agreement
+  - Transit Subnets:
+    - IPv4 100.100.101.0/30
+
+
+### 🧩 Compose building blocks
+
+```
+docker-compose.yml
+├─ router-templates.yml        # Canonical definitions for border/interior routers
+├─ AS-65222-SLT.yml            # StrataLink Telecom (AS65222) topology (border + core)
+└─ AS-65801-AGT.yml            # Axiom Global Transit (AS65801) topology (border)
 ```
 
-### 🚀 Startup
+- `router-templates.yml` declares template services for `border-router` and `interior-router`. Both mount the `scripts/` directory read-only and start via role-specific entrypoints.
+- Each AS file supplies hostnames, container names, environment variables, and binds docker networks to `eth0`/`eth1` as needed.
+- Compose profiles (`all-isps`, `slt-as`, `agt-as`) let you launch the full lab or focus on a single autonomous system.
 
-To start the internet emulator, simply run:
 
-```bash
-docker compose up
-```
+### 🚀 Getting started
 
-This will build and start all the containers defined in the `docker-compose.yml` file, creating the network topology with the configured ISPs and their BGP peering relationships.
+1. **Prerequisites** – Docker Engine with the Compose V2 plugin on Linux.
+2. **Build and launch everything**
+   ```bash
+   docker compose --profile all-isps up --build
+   ```
+3. **Check status**
+   ```bash
+   docker compose --profile all-isps ps
+   ```
+4. **Run a single AS profile**
+   ```bash
+   docker compose --profile slt-as up
+   docker compose --profile agt-as up
+   ```
+5. **Stop and clean up**
+   ```bash
+   docker compose --profile all-isps down
+   ```
 
-**To run in detached mode (background):**
+### 🔧 Router bootstrap sequence
 
-```bash
-docker compose up -d
-```
+Both entrypoint scripts (`entrypoint-border.sh`, `entrypoint-interior.sh`) perform the following steps:
 
-**To stop the emulator:**
+1. Print a banner indicating the ISP and ASN being configured.
+2. Copy the appropriate `daemons` template for the router role into `/etc/frr/daemons`.
+3. Copy `scripts/frr-${HOSTNAME}.conf` into `/etc/frr/frr.conf`.
+4. Enable IPv4 forwarding (`sysctl -w net.ipv4.ip_forward=1`). Border routers also flush docker-assigned IPv4 addresses from each interface.
+5. Start the FRR service via `/etc/init.d/frr start` and keep the container running with `sleep infinity`.
 
-```bash
-docker compose down
-```
+### 🧪 Validation checklist
 
-### 🔧 Accessing the "Routers" - Verify BGP Peering and Connectivity 
+- **BGP adjacency**
+  ```bash
+  docker exec -it <container_name> vtysh -c "show ip bgp summary"
+  ```
+- **Route tables**
+  ```bash
+  docker exec -it <container_name> vtysh -c "show ip bgp"
+  ```
+- **Reachability Examples**
+  ```bash
+  docker exec -it slt-mht-bdr-01 ping -I 172.40.64.1 100.100.101.1
+  docker exec -it agt-bos-bdr-01 ping -I 100.100.100.1 172.40.64.1
+  ```
 
-You can access the FRR CLI interactively on each router using the following commands:
-
-```bash
-docker exec -it horse-isp vtysh
-docker exec -it duck-isp vtysh
-docker exec -it ram-isp vtysh
-``` 
-
-**Once inside the vtysh session**, you can verify BGP peering and routes using commands like:
-```bash
-show ip bgp summary
-show ip route
-show ip bgp
-# etc.
-```
-
-**Expected output** - We expect to see a route summary like:
+Sample BGP output (StrataLink border):
 
 ```
    Network          Next Hop            Metric LocPrf Weight Path
-*> 50.50.0.0/16     172.32.0.2               0             0 200 i
-*> 66.211.0.0/16    0.0.0.0                  0         32768 i
-*> 216.177.0.0/16   172.32.0.2                             0 200 100 i
+*> 100.100.100.0/18 100.100.101.1            0             0 65801 i
+*> 172.40.64.0/20   0.0.0.0                  0         32768 i
 ```
 
-We can ping the public IPs of directly connected ISPs to verify connectivity:
+### 📜 Conventions & Standards 
+- Autonomous systems use private ASNs from the 64k-65k range (e.g., 65222, 65801).
+- IPv4 addressing uses RFC 1918 space (e.g., 172.40.0.0/20, 100.100.100.0/18).
+- IPv6 addressing uses documentation prefixes (e.g., 2001:db8::/32).
+- Router names use IATA airport codes for border routers (e.g., `slt-mht-bdr-01` for StrataLink's Manchester, NH border router) and simple numeric names for core routers (e.g., `slt-core-01`).
+- Transit subnets between ASNs use /30 for IPv4 and /126 for IPv6 point-to-point links. The subnets are typically provided by the upstream AS.
 
-From HORSE to DUCK:
-```bash
-ping 50.50.0.1
-```
+### ➕ Adding new Autonomous Systems
+To add a new Autonomous System, follow these steps:
+1. **Create a new Compose file** – e.g., `AS-12345-NEW.yml` for the new AS. 
+2. **Extend router templates** – Use the `border-router` and `interior-router` templates from `router-templates.yml`. Entrypoints and volume mounts are inherited.
+3. **Define networks and link** - Each point-to-point link should have its own ipvalan network defined in the new AS compose file. Typically, the AS providing the transit subnets will have the networks defined in their compose file. 
+4. **Connect Interfaces** - Under the service definition for each router, connect the appropriate networks to `eth0`, `eth1`, using `interface_name` to ensure deterministic naming.
+5. **Create a FRR config** – Add a corresponding `frr-<hostname>.conf` file in the `scripts/` directory with the necessary BGP/OSPF configuration for each router. IP addresses are assigned within the config file, not by Docker.
+6. **Update the main compose file** – Add the new AS compose file to `docker-compose.yml` and create a new profile if desired.
 
-When pinging between ISPs that are not directly connected, be sure to specify the source IP address to ensure the correct interface is used:
-From HORSE to RAM:
-```bash
-ping -I 216.177.0.1 66.211.0.1
-```   
+### 🐞 Troubleshooting tips
 
+- `docker logs <container>` captures entrypoint output (useful for copy or permission issues).
+- `docker exec -it <container> vtysh -c "show logging"` surfaces FRR debug logs without leaving the CLI.
+- Confirm ipvlan networks with `docker network ls`; each point-to-point link is defined in the AS-specific YAML files.
+- If Compose warns about unknown profiles, upgrade to Compose v2.17+.
+
+### 🧭 Next steps
+
+- Add IPv6 advertisements (`2001:db8:beef::/40`, `2001:db8:101::/36`).
+- Use `customer-templates.yml` as a starting point for customer edge routers.
+- Layer on telemetry or alerting (e.g., [BGPalerter](https://github.com/nttgin/BGPalerter)).
+- Introduce service nodes (DNS, web) behind StrataLink to test policy routing.
+- Experiment with route filtering, prepending, and MEDs between the two ASNs.
+- Introduce a CDN (or eyeball network similar to Netflix) to begin experimenting with IP anycast, partial routing, etc.
