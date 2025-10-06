@@ -1,10 +1,14 @@
 # StrataLink Telecom
 # AS-65222
-# 172.40.64.0/20 |  2001:db8:beef::/40
+# 172.40.64.0/20 | 2001:db8:beef::/40 
+
+# MHT lo: 172.40.64.0/28
+# MHT P2P: 172.40.64.16/27
+# Customers: 172.40.65.0/23
 
 networks: 
   bh_slt-mht-bdr-01_slt-mht-cor-01:
-    driver: ipvlan
+    driver: macvlan
     internal: true
     labels: 
       type: "backhaul"

@@ -1,16 +1,16 @@
 ## 🌐 Docker Internet Emulator
 
-Inter-domain routing emulation with FRR, Docker Compose, and ipvlan networks.
+Inter-domain routing emulation with FRR, Docker Compose, and macvlan networks.
 
 ### ✨ Highlights
 
 - **Composable topology** – `docker-compose.yml` includes per-AS bundles that extend shared router templates.
 - **Reusable FRR image** – border and interior routers share an Ubuntu + FRR 8 base image with helper entrypoints.
-- **Deterministic interfaces** – ipvlan networks and explicit `interface_name` assignments keep link naming consistent across runs.
+- **Deterministic interfaces** – macvlan networks and explicit `interface_name` assignments keep link naming consistent across runs.
 
 
 ### ⚠️ Caution
-- **Linux only** – Requires Docker Engine with Compose V2 on a Linux host due to ipvlan networking.
+- **Linux only** – Requires Docker Engine with Compose V2 on a Linux host due to macvlan networking.
 - **Not for production** – This is a learning and experimentation tool, not a production-grade system.
 - **Added capabilities** – Containers run with `CAP_NET_ADMIN` and `CAP_NET_RAW` to manipulate networking. 
 

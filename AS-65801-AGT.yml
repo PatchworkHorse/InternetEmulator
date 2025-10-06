@@ -4,14 +4,14 @@
 
 networks: 
   bh_atg-bos-bdr-01_slt-mht-bdr-01:
-    driver: ipvlan
+    driver: macvlan
     internal: true
     labels: 
       type: "backhaul"
       notes: "Peering StrataLink Telecom (BOS <-> MHT)"
 
   bh_atg-bos-bdr-01_atg-nyc-bdr-01:
-    driver: ipvlan
+    driver: macvlan
     internal: true
     labels: 
       type: "backhaul"
@@ -47,4 +47,4 @@ services:
     networks:
       fabric_nyc_ix_1:
         interface_name: eth0
-      
+    

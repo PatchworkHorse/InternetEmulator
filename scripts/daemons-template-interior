@@ -1,6 +1,6 @@
 bgpd=no
 ospfd=yes
-ospf6d=no
+ospf6d=yes
 ripd=yes
 ripngd=no
 isisd=no

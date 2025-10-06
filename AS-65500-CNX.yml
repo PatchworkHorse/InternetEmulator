@@ -4,7 +4,7 @@
 
 networks: 
   fabric_nyc_ix_1:
-    driver: ipvlan
+    driver: macvlan
     internal: true
     labels: 
       type: ix_fabric
