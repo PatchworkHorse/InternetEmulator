@@ -7,7 +7,7 @@
 # Customers: 172.40.65.0/23
 
 networks: 
-  bh_slt-mht-bdr-01_slt-mht-cor-01:
+  bh_slt-mht-bdr-01__slt-mht-cor-01:
     driver: macvlan
     internal: true
     labels: 
@@ -28,10 +28,10 @@ services:
       - ROUTER_TYPE=border
     networks:
       # Peering to Axiom Global Transit (BOS <-> MHT)
-      bh_atg-bos-bdr-01_slt-mht-bdr-01:
+      bh_atg-bos-bdr-01__slt-mht-bdr-01:
         interface_name: eth0
       # Internal link to SLT Core
-      bh_slt-mht-bdr-01_slt-mht-cor-01:
+      bh_slt-mht-bdr-01__slt-mht-cor-01:
         interface_name: eth1
 
   slt-mht-cor-01:
@@ -46,5 +46,5 @@ services:
       - ASN=65222
       - ROUTER_TYPE=interior
     networks:
-      bh_slt-mht-bdr-01_slt-mht-cor-01:
+      bh_slt-mht-bdr-01__slt-mht-cor-01:
         interface_name: eth0
