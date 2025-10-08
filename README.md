@@ -1,5 +1,8 @@
 ## 🌐 Docker Internet Emulator
 
+> 🚧 *This project is very much a work in progress. This README may lag behind a bit.  
+> Feel free to contact with questions.
+
 Inter-domain routing emulation with FRR, Docker Compose, and macvlan networks.
 
 ### ✨ Highlights
@@ -9,7 +12,7 @@ Inter-domain routing emulation with FRR, Docker Compose, and macvlan networks.
 - **Deterministic interfaces** – macvlan networks and explicit `interface_name` assignments keep link naming consistent across runs.
 
 
-### ⚠️ Caution
+### ⚠️ Limitations & Security
 - **Linux only** – Requires Docker Engine with Compose V2 on a Linux host due to macvlan networking.
 - **Not for production** – This is a learning and experimentation tool, not a production-grade system.
 - **Added capabilities** – Containers run with `CAP_NET_ADMIN` and `CAP_NET_RAW` to manipulate networking. 
@@ -37,11 +40,17 @@ StrataLink Telecom is a regional ISP based in the Northeastern United States ser
 
 Axiom Global Transit is a mid-sized Tier 2 transit provider with a global footprint. They peer with several Tier 1 networks and operate multiple data centers worldwide.
 
+#### Core Nexus Exchange – AS65500
 
-### 🤝 Current Peering Arrangements
+- IPv4: 198.51.100.0/23
+- IPv6: 2001:db8:0:00::/64
+
+Core Nexus Exchange is a neutral IX based in New York City. They provide a neutral switch fabric for participating networks to interconnect either bilaterally or multilateral via IX operated route servers.
+
+### 🤝 Current Peering Arrangements & Upstreams
 
 - **StrataLink Telecom (AS65222)** <--> **Axiom Global Transit (AS65801)**
-  - Bilateral agreement
+  - Upstream transit relationship
   - Transit Subnets:
     - IPv4 100.100.101.0/30
 
@@ -117,7 +126,7 @@ Sample BGP output (StrataLink border):
 
 ### 📜 Conventions & Standards 
 - Autonomous systems use private ASNs from the 64k-65k range (e.g., 65222, 65801).
-- IPv4 addressing uses RFC 1918 space (e.g., 172.40.0.0/20, 100.100.100.0/18).
+- IPv4 addressing generally uses RFC 1918 space (e.g., 172.40.0.0/20, 100.100.100.0/18). However we've started to bend this to make the topology more interesting and elements more distinct.
 - IPv6 addressing uses documentation prefixes (e.g., 2001:db8::/32).
 - Router names use IATA airport codes for border routers (e.g., `slt-mht-bdr-01` for StrataLink's Manchester, NH border router) and simple numeric names for core routers (e.g., `slt-core-01`).
 - Transit subnets between ASNs use /30 for IPv4 and /126 for IPv6 point-to-point links. The subnets are typically provided by the upstream AS.

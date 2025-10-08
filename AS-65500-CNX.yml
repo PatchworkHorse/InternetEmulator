@@ -8,7 +8,7 @@ networks:
     internal: true
     labels: 
       type: ix_fabric
-      notes: Nexus Exchange Fabric NYC
+      notes: Core Nexus Exchange Fabric NYC
 
 services:
   cnx-nyc-rs-01:
