@@ -11,15 +11,15 @@
 
 networks: 
   bh_atg-bos-bdr-01__slt-mht-bdr-01:
-    driver: macvlan
-    internal: true
+    driver: bridge
+    internal: false
     labels: 
       type: "backhaul"
       notes: "Peering StrataLink Telecom (BOS <-> MHT)"
 
   bh_atg-bos-bdr-01__atg-nyc-bdr-01:
-    driver: macvlan
-    internal: true
+    driver: bridge
+    internal: false
     labels: 
       type: "backhaul"
       notes: "Internal backhaul (BOS <-> NYC)"
