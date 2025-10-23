@@ -9,11 +9,15 @@
   },
   "runArgs": ["--privileged"],
   "postCreateCommand": "docker compose version",
+  "postStartCommand": "bash .devcontainer/setup.sh",
   "customizations": {
     "vscode": {
       "extensions": [
         "ms-azuretools.vscode-docker"
-      ]
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
     }
   },
   "forwardPorts": [],
