@@ -9,6 +9,7 @@
   },
   "runArgs": ["--privileged"],
   "postCreateCommand": "docker compose version",
+  "postStartCommand": "docker compose --profile all-isps up -d",
   "postAttachCommand": "bash .devcontainer/setup.sh",
   "customizations": {
     "vscode": {
