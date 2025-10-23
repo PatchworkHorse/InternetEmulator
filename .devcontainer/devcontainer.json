@@ -8,7 +8,8 @@
     }
   },
   "runArgs": ["--privileged"],
-  "postCreateCommand": "docker compose version && echo 'source /workspaces/InternetEmulator/.devcontainer/welcome.sh' >> ~/.bashrc",
+  "postCreateCommand": "docker compose version",
+  "postStartCommand": "bash .devcontainer/setup.sh",
   "customizations": {
     "vscode": {
       "extensions": [
