@@ -9,7 +9,7 @@
   },
   "runArgs": ["--privileged"],
   "postCreateCommand": "docker compose version",
-  "postStartCommand": "bash .devcontainer/setup.sh",
+  "postAttachCommand": "bash .devcontainer/setup.sh",
   "customizations": {
     "vscode": {
       "extensions": [
