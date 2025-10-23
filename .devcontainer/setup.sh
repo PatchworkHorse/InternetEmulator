@@ -1,14 +1,8 @@
 #!/bin/bash
 
-echo "🌐 Starting Internet Emulator..."
-docker compose --profile all-isps up -d
+# Start all ISPs
+docker compose --profile all-isps up -d > /dev/null 2>&1
 
-echo ""
-echo "✅ All routers are starting!"
-echo ""
-echo "📋 Quick Commands:"
-echo "  docker compose logs -f                # View logs"
-echo "  docker exec -it atg-bos-bdr-01 bash  # Access router atg-bos-bdr-01"
-echo "  docker exec -it atg-nyc-bdr-01 bash  # Access router atg-nyc-bdr-01"
-echo "  docker compose down                   # Stop all"
-echo ""
+# Connect to a router for the user to see something happening
+docker exec -it atg-bos-bdr-01 bash -c "echo ''; echo
+echo '🚀 Connected to ATG BOS BDR-01 Router!'; echo '';"
