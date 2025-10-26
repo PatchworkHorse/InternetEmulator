@@ -8,8 +8,8 @@
 
 networks: 
   bh_slt-mht-bdr-01__slt-mht-cor-01:
-    driver: bridge
-    internal: false
+    driver: ${NETWORK_DRIVER:-macvlan}
+    internal: ${NETWORK_INTERNAL:-true}
     labels: 
       type: "backhaul"
       notes: Internal link to SLT Core

@@ -4,8 +4,8 @@
 
 networks: 
   fabric_nyc_ix_1:
-    driver: bridge
-    internal: false
+    driver: ${NETWORK_DRIVER:-macvlan}
+    internal: ${NETWORK_INTERNAL:-true}
     labels: 
       type: ix_fabric
       notes: Core Nexus Exchange Fabric NYC
