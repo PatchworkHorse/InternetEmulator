@@ -71,6 +71,13 @@ docker-compose.yml
 
 ### 🚀 Getting started
 
+#### Codespaces (https://github.com/codespaces)
+1. Click the green "Code" button and select "Open with Codespaces" to create a new codespace.
+2. Once the codespace is ready, it will automatically build and bring up the full topology.
+3. You'll be dropped into vtysh on one of the routers to start exploring!
+
+#### Local setup
+
 1. **Prerequisites** – Docker Engine with the Compose V2 plugin on Linux.
 2. **Build and launch everything**
    ```bash
